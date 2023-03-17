@@ -1,6 +1,6 @@
 import orthanc, json
 
-# The list of Orthanc Peers to forward to. If left empty, the list is loaded dynamically on start-up and forwarding is enabled to ALL peers
+# The list of Orthanc DICOM Nodes to forward to. If left empty, the list is loaded dynamically on start-up and forwarding is enabled to ALL DICOM Nodes
 MODALITY_LIST = []
 # C-Store configuration, see https://api.orthanc-server.com/#tag/Networking/paths/~1modalities~1{id}~1store/post
 moveOriginatorAet = 'MoveOriginatorAet'

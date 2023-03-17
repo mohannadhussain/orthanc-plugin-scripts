@@ -1,10 +1,10 @@
 import orthanc, json
 
 # The list of Orthanc Peers to forward to. If left empty, the list is loaded dynamically on start-up and forwarding is enabled to ALL peers
-MODALITY_LIST = []
+PEER_LIST = []
 
 def OnChange(changeType, level, resourceId):
-    global MODALITY_LIST
+    global PEER_LIST
 
     if changeType == orthanc.ChangeType.ORTHANC_STARTED: # Server start-up
         if len(PEER_LIST) == 0:
