@@ -37,7 +37,7 @@ def initializeRules():
 
 def updateRules(output, uri, **request):
     """
-    Allows the rules to be updated via an HTTP POST call
+    Allows the rules to be updated via an HTTP POST call, or inspected during run-time via HTTP GET
 
     :param output: Provided by the Orthanc API
     :param uri: Provided by the Orthanc API
@@ -46,31 +46,35 @@ def updateRules(output, uri, **request):
     """
     global ROUTING_RULES, rulesFilePath
 
-    if request['method'] != 'POST':
-        output.SendMethodNotAllowed('POST')
-        return
+    if request['method'] == 'GET': # Echo the rules back, allows to run-time introspection of rules
+        output.AnswerBuffer(json.dumps(ROUTING_RULES, indent=2), 'application/json')
 
-    try:
-        rules = json.loads(request['body'])
-        rules_str = json.dumps(rules, indent=2)
-        #TODO Perform some error checking?!?
-        ROUTING_RULES = rules
-
-        # Store a copy of the rules onto disk, so they are available on start-up
+    elif request['method'] == 'POST': # Allow the rules to be updated
         try:
-            file = open(rulesFilePath, 'w')
-            file.write(rules_str)
-            file.close()
-        except Exception as e:
-            print(f"Caught an exception while attempting to write rules to {rulesFilePath}: {e}")
+            rules = json.loads(request['body'])
+            rules_str = json.dumps(rules, indent=2)
+            #TODO Perform some error checking?!?
+            ROUTING_RULES = rules
 
-        print(f"Routing rules: {ROUTING_RULES}")
-        initializeRules()
-        output.AnswerBuffer(rules_str, 'application/json')
-    except Exception as e:
-        msg = f"Caught exception while updating config rules: {e}"
-        print(msg)
-        output.SendHttpStatus(500, msg, len(msg))
+            # Store a copy of the rules onto disk, so they are available on start-up
+            try:
+                file = open(rulesFilePath, 'w')
+                file.write(rules_str)
+                file.close()
+            except Exception as e:
+                print(f"Caught an exception while attempting to write rules to {rulesFilePath}: {e}")
+
+            print(f"Routing rules: {ROUTING_RULES}")
+            initializeRules()
+            output.AnswerBuffer(rules_str, 'application/json')
+        except Exception as e:
+            msg = f"Caught exception while updating config rules: {e}"
+            print(msg)
+            output.SendHttpStatus(500, msg, len(msg))
+            return
+
+    else: # Only accepts GET and POST
+        output.SendMethodNotAllowed('GET,POST')
         return
 
 orthanc.RegisterRestCallback('/dicom-router/rules', updateRules)
@@ -145,6 +149,7 @@ def onChange(changeType, level, resourceId):
                     except Exception as e:
                         print(f"Caught an exception while attempting to forward a study {e}")
             else:
+                continue
                 #print(f"Study DID NOT match rule: {rule['rule']}")
 
 
