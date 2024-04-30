@@ -47,7 +47,16 @@ def updateRules(output, uri, **request):
     global ROUTING_RULES, rulesFilePath
 
     if request['method'] == 'GET': # Echo the rules back, allows to run-time introspection of rules
-        output.AnswerBuffer(json.dumps(ROUTING_RULES, indent=2), 'application/json')
+        # Remove the compiled rules to avoid a TypeError due to failed serialization
+        rules = []
+        for rule_old in ROUTING_RULES:
+            rule_new = {}
+            for key, value in rule_old.items():
+                if key not in ["compiledRule"]:
+                    rule_new[key] = value
+            rules.append(rule_new)
+
+        output.AnswerBuffer(json.dumps(rules, indent=2), 'application/json')
 
     elif request['method'] == 'POST': # Allow the rules to be updated
         try:
@@ -154,3 +163,4 @@ def onChange(changeType, level, resourceId):
 
 
 orthanc.RegisterOnChangeCallback(onChange)
+
