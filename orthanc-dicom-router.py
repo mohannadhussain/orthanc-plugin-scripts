@@ -117,12 +117,15 @@ def expandDicomAttrbutes(dict_in : Dict):
     """
     dict_out = {}
     for key in dict_in.keys(): #TODO This logic is too simple, there's definitely room for improvement here :)
-        if 'Date' in key or 'Time' in key:
-            dict_out[key] = int(dict_in[key])
-        elif '\\' in dict_in[key]:
-            dict_out[key] = dict_in[key].split('\\')
-        else:
-            dict_out[key] = dict_in[key]
+        try:
+            if "Date" in key or "Time" in key:
+                dict_out[key] = float(dict_in[key])
+            elif "\\" in dict_in[key]:
+                dict_out[key] = dict_in[key].split("\\")
+            else:
+                dict_out[key] = dict_in[key]
+        except Exception as e:
+            print(f"Caught exception while processing key {key}: {e}")
 
     return dict_out
 
