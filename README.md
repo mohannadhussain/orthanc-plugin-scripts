@@ -66,7 +66,7 @@ modalities) to forward matching studies to.
 The plugin also adds two features to be even more useful...
 
 #### 1. Allow rules to be updated via REST 
-The JSON-based rules can be updated via a REST API call. The plugin listens at `http://localhost:4242/dicom-router/rules`
+The JSON-based rules can be updated via a REST API call. The plugin listens at `http://localhost:8042/dicom-router/rules`
 where you can post something like the JSON structure below to update the rules:
 ```commandline
 [
