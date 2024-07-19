@@ -157,7 +157,7 @@ def onChange(changeType, level, resourceId):
                 for modality in rule["destinations"]:
                     print(f"Forwarding study {resourceId} to modality {modality}")
                     try:
-                        orthanc.RestApiPost(f'/modalities/{modality}/store', '{"Asynchronous": false,"Compress": true,"Permissive": true,"Priority": 0,"Resources": ["' + resourceId + '"],"Synchronous": false, "MoveOriginatorAet": "' + moveOriginatorAet + '", "MoveOriginatorID": ' + str(moveOriginatorID) + ', "Permissive": true, "StorageCommitment": false}')
+                        orthanc.RestApiPost(f'/modalities/{modality}/store', '{"Asynchronous": true,"Compress": true,"Permissive": true,"Priority": 0,"Resources": ["' + resourceId + '"],"Synchronous": false, "MoveOriginatorAet": "' + moveOriginatorAet + '", "MoveOriginatorID": ' + str(moveOriginatorID) + ', "Permissive": true, "StorageCommitment": false}')
                     except Exception as e:
                         print(f"Caught an exception while attempting to forward a study {e}")
             else:
